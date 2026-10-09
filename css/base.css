@@ -1,0 +1,25 @@
+:root {
+    color-scheme: light;
+    font-family: Georgia, "Times New Roman", serif;
+    color: #54371f;
+    background: #4d351f;
+    font-synthesis: none;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+}
+
+body {
+    min-height: 100dvh;
+}
+
+[hidden] {
+    display: none !important;
+}

@@ -1,0 +1,36 @@
+.screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.paper {
+    width: min(780px, 100%);
+    min-height: 546px;
+    padding: 78px 76px 68px;
+    background: url("../assets/manuscript-paper.png") center / 100% 100% no-repeat;
+    text-align: center;
+}
+
+.paper h1 {
+    margin: 12px 0 26px;
+    font-size: 32px;
+    line-height: 1.2;
+    letter-spacing: 1px;
+}
+
+.paper h2 {
+    margin: 0 0 24px;
+    font-size: 21px;
+    line-height: 1.4;
+}
+
+.paper p {
+    margin: 14px 0;
+    font-size: 18px;
+    line-height: 1.55;
+}
