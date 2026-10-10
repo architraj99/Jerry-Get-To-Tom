@@ -23,3 +23,37 @@ body {
 [hidden] {
     display: none !important;
 }
+
+button {
+    border: 3px solid #54371f;
+    border-radius: 1px 3px 0 2px;
+    padding: 12px 23px;
+    background: #c6a05c;
+    color: #352314;
+    font: bold 16px "Trebuchet MS", Arial, sans-serif;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+button:hover {
+    background: #d7be6a;
+}
+
+button:active {
+    background: #b88151;
+    transform: translateY(2px);
+}
+
+button:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+
+button:focus-visible {
+    outline: 3px dashed #54371f;
+    outline-offset: 5px;
+}
+
+h1:focus, canvas:focus {
+    outline: none;
+}

@@ -34,3 +34,7 @@
     font-size: 18px;
     line-height: 1.55;
 }
+
+.paper > button, .result-buttons {
+    margin-top: 23px;
+}
