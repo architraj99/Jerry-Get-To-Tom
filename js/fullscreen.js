@@ -22,7 +22,7 @@ function resizeGame() {
     const controlsHeight = controls.getBoundingClientRect().height;
     const availableWidth = document.documentElement.clientWidth;
     const availableHeight = window.innerHeight - controlsHeight;
-    const width = Math.min(availableWidth, availableWidth * 16 / 9);
+    const width = Math.min(availableWidth, availableHeight * 16 / 9);
 
     document.getElementById("game-stage").style.width = Math.max(1, width) + "px";
 }
