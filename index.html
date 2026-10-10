@@ -8,10 +8,27 @@
         <link rel="icon" href="assets/manuscript-paper.png" type="image/png">
         <link rel="stylesheet" href="css/base.css">
         <link rel="stylesheet" href="css/story.css">
+        <link rel="stylesheet" href="css/game.css">
+        <script src="js/fullscreen.js" defer></script>
+        <script src="js/game.js" defer></script>
         <script src="js/story.js" defer></script>
+        <script src="js/main.js" defer></script>
     </head>
     <body>
-        <main>s
+        <main>
+            <section id="game-view" aria-label="Tom and Jerry rescue game" hidden>
+                <div id="game-stage">
+                    <canvas id="game" width="960" height="540" tabindex="0" aria-label="Move Jerry with arrow keys or A and D. Jump with up, W or space. Reach Tom before time runs out."></canvas>
+                </div>
+                <div id="touch-controls" aria-label="Touch Controls">
+                    <div class="direction-controls">
+                        <button type="button" data-control="left" aria-label="Move left">LEFT</button>
+                        <button type="button" data-control="right" aria-label="Move right">RIGHT</button>
+                    </div>
+                    <button type="button" data-control="jump" aria-label="Jump">JUMP</button>
+                </div>
+            </section>
+
             <section id="story-screen" class="screen" aria-labelledby="story-title">
                 <div class="paper">
                     <h1 id="story-title" tabindex="-1">JERRY!</h1>

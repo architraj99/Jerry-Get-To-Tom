@@ -1,0 +1,1 @@
+document.getElementById("play").disabled = false;

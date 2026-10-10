@@ -1,0 +1,58 @@
+body.playing {
+    overflow: hidden;
+}
+
+#game-view {
+    width: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction:column;
+    justify-content: center;
+    align-items: center;
+    background: #352314;
+    overflow: hidden;
+}
+
+#game-stage {
+    position: relative;
+    width: min(100vw, calc(100dvh * 16 / 9));
+    aspect-ratio: 16 / 9;
+    flex: none;
+}
+
+#game {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #e2c47e;
+    touch-action: none;
+}
+
+#touch-controls {
+    display: none;
+    width: min(660px, 100%);
+    height: 78px;
+    flex: none;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    gap: 15px;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.direction-controls {
+    display: flex;
+    gap: 10px;
+}
+
+#touch-controls button {
+    min-height: 54px;
+    min-width: 76px;
+    padding: 12px;
+    touch-action: none;
+}
+
+body.touch-input #touch-controls {
+    display: flex;
+}
