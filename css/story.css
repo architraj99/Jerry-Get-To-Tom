@@ -38,3 +38,54 @@
 .paper > button, .result-buttons {
     margin-top: 23px;
 }
+
+.instructions-paper {
+    padding-top: 58px;
+    padding-bottom: 54px;
+}
+
+.instructions-paper h1 {
+    font-size: 27px;
+    margin-bottom: 24px;
+}
+
+.controls-list {
+    width: min(360px, 100%);
+    margin: 0 auto 20px;
+}
+
+.controls-list div {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 14px 20px;
+    gap: 2px;
+    align-items: center;
+    margin: 12px 0;
+    text-align: center;
+}
+
+.controls-list dt {
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 14px;
+}
+
+.controls-list dd {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin: 0;
+    border: 2px solid #8a673b;
+    padding: 0 8px;
+    font: bold 16px/16px "Courier New", monospace;
+}
+
+.paper .time-limit {
+    font: bold 21px "Courier New", monospace;
+    margin-top: 20px;
+}
+
+.instructions-paper > button {
+    margin-top: 8px;
+    min-width: 120px;
+}

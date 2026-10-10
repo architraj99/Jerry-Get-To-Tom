@@ -8,16 +8,30 @@
         <link rel="icon" href="assets/manuscript-paper.png" type="image/png">
         <link rel="stylesheet" href="css/base.css">
         <link rel="stylesheet" href="css/story.css">
+        <script src="js/story.js" defer></script>
     </head>
     <body>
-        <main>
+        <main>s
             <section id="story-screen" class="screen" aria-labelledby="story-title">
                 <div class="paper">
                     <h1 id="story-title" tabindex="-1">JERRY!</h1>
                     <h2>TOM IS IN DANGER.</h2>
                     <p>He is badly hurt and needs his medicine.</p>
                     <p>You're the only one who can reach him in time.</p>
-                    <button id="accept" type="button" disabled>YEAH, I'LL DO IT</button>
+                    <button id="accept" type="button">YEAH, I'LL DO IT</button>
+                </div>
+            </section>
+
+            <section id="instructions-screen" class="screen" aria-labelledby="instructions-title" hidden>
+                <div class="paper instructions-paper">
+                    <h1 id="instructions-title tabindex="-1">GET TO TOM IN TIME</h1>
+                    <dl class="controls-list">
+                        <div><dt>MOVE</dt><dd><span>← →</span><span>A D</span></dd></div>
+                        <div><dt>JUMP</dt><dd><span>↑</span><span>W</span><span>SPACE</span></dd></div>
+                    </dl>
+                    <p>Avoid spikes and gaps.<br>Reach Tom before the timer ends.</p>
+                    <p class="time-limit">TIME: 45 SECONDS</p>
+                    <button id="play" type="button" disabled>PLAY</button>
                 </div>
             </section>
 
