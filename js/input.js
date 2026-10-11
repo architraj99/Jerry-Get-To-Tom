@@ -21,7 +21,7 @@ function updateHeldInput() {
       touches.includes("right");
 
     document.querySelectorAll("[data-control").forEach(function (button) {
-        button.classList.toggle("held", touches.includes(button.dataset/control));
+        button.classList.toggle("held", touches.includes(button.dataset.control));
     });
 }
 
@@ -34,7 +34,7 @@ function clearInput() {
 
 function useTouchControls(enabled) {
     document.body.classList.toggle("touch-input", enabled);
-    document.dispatchEvent(new Event("inputChange") );
+    document.dispatchEvent(new Event("inputchange") );
 }
 
 window.addEventListener("keydown", function (event) {
@@ -66,9 +66,44 @@ window.addEventListener("keyup", function (event) {
     updateHeldInput();
 });
 
+document.querySelectorAll("[data-control]").forEach(function (button) {
+    button.addEventListener("pointerdown", function (event) {
+        event.preventDefault();
+        startCountdown();
+        button.setPointerCapture(event.pointerId);
+        heldPointers.set(event.pointerId, button.dataset.control);
+
+        if (button.dataset.control === "jump") {
+            input.jumpQueued = true;
+        }
+
+        updateHeldInput();
+    });
+
+    function releasePointer(event) {
+        heldPointers.delete(event.pointerId);
+        updateHeldInput();
+    }
+
+    button.addEventListener("pointerup", releasePointer);
+    button.addEventListener("pointercancel", releasePointer);
+    button.addEventListener("lostpointercapture", releasePointer);
+    button.addEventListener("contextmenu", function (event) {
+        event.preventDefault();
+    });
+});
+
+document.addEventListener("pointerdown", function (event) {
+    if (event.pointerType === "touch") {
+        useTouchControls(true);
+    }
+});
+
 window.addEventListener("blur", clearInput);
 document.addEventListener("visibilitychange", function () {
     if (document.hidden) {
         clearInput();
     }
 });
+
+useTouchControls(window.matchMedia("(pointer: coarse)").matches);

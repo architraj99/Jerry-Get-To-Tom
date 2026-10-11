@@ -53,6 +53,11 @@ body.playing {
     touch-action: none;
 }
 
+#touch-controls button.held {
+    background: #b88151;
+    transform: translateY(2px);
+}
+
 body.touch-input #touch-controls {
     display: flex;
 }

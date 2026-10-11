@@ -89,3 +89,9 @@
     margin-top: 8px;
     min-width: 120px;
 }
+
+#asset-status {
+    margin: 12px auto 0;
+    font: 14px Arial, sans-serif;
+    overflow-wrap: anywhere;
+}
