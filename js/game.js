@@ -10,13 +10,28 @@ const game = {
     cameraX: 0,
     assetsReady: false,
     lastFrame: null,
+    accumulator: 0,
     frameId: 0
+};
+
+const player = {
+    x: level.start.x,
+    y: level.start.y,
+    width: 28,
+    height: 58,
+    vx: 0,
+    vy: 0,
+    facing: 1,
+    grounded: false,
+    coyoteTime: 0,
+    jumpBuffer: 0
 };
 
 function loadImages() {
     const files = {
         background: "background.png",
-        paper: "manuscript-paper.png"
+        paper: "manuscript-paper.png",
+        jerry: "jerry.png"
     };
 
     const loading = Object.keys(files).map(function (name) {
@@ -53,7 +68,16 @@ function startGame() {
     game.elapsedTime = 0;
     game.cameraX = 0;
     game.lastFrame = null;
+    game.accumulator = 0;
 
+    player.x = level.start.x;
+    player.y = level.start.y;
+    player.vx = 0;
+    player.vy = 0;
+    player.facing = 1;
+    player.grounded = true;
+    player.coyoteTime = 0.1;
+    player.jumpBuffer = 0;
     drawGame();
     game.frameId = requestAnimationFrame(gameFrame);
 }
@@ -64,10 +88,62 @@ function startCountdown() {
     }
 }
 
+function movePlayer(dt) {
+    player.vx = 0;
+
+    if (input.left && !input.right) {
+        player.vx = -250;
+        player.facing = -1;
+    }
+
+    if (input.right && !input.left) {
+        player.vx = 250;
+        player.facing = 1;
+    }
+
+    if (input.jumpQueued) {
+        player.jumpBuffer = 0.12;
+        input.jumpQueued = false;
+    }
+
+    if (player.grounded) {
+        player.coyoteTime = 0.1;
+    } else {
+        player.coyoteTime = Math.max(0, player.coyoteTime - dt);
+    }
+
+    if (player.jumpBuffer > 0 && player.coyoteTime > 0) {
+        player.vy = -660;
+        player.grounded = false;
+        player.coyoteTime = 0;
+        player.jumpBuffer = 0;
+    }
+
+    player.jumpBuffer = Math.max(0, player.jumpBuffer - dt);
+    player.x += player.vx * dt;
+    player.x = Math.max(0, Math.min(level.width - player.width, player.x));
+
+    player.vy += 1750 * dt;
+    player.y += player.vy * dt;
+    player.grounded = false;
+
+    if (player.y + player.height >= 460) {
+        player.y = 460 - player.height;
+        player.vy = 0;
+        player.grounded = true;
+    }
+}
+
+function updateGame(dt) {
+    movePlayer(dt);
+
+}
+
 function finishGame(won) {
     game.status = "finished";
     clearInput();
 }
+
 
 function gameFrame(timestamp) {
     if (game.lastFrame === null) {
@@ -89,6 +165,16 @@ function gameFrame(timestamp) {
 
         if (game.time === 0) {
             finishGame(false);
+        } else {
+            game.accumulator += Math.min(elapsed, 0.1);
+
+            while (
+                game.accumulator >= 1 / 120 && 
+                game.status === "playing"
+            ) {
+                updateGame(1 / 120);
+                game.accumulator -= 1 / 120;
+            }
         }
     }
 
@@ -97,6 +183,21 @@ function gameFrame(timestamp) {
     if (game.status === "playing") {
         game.frameId = requestAnimationFrame(gameFrame);
     }
+}
+
+function drawPlayer() {
+    const height = 72;
+    const width = height * images.jerry.width / images.jerry.height;
+    const centerX = player.x + player.width / 2;
+    const bottom = player.y + player.height;
+    context.save();
+    context.translate(centerX, bottom);
+    context.scale(player.facing, 1);
+    context.imageSmoothingEnabled = true;
+    context.drawImage(images.jerry, -width / 2, -height, width, height);
+    context.imageSmoothingEnabled = false;
+
+    context.restore();
 }
 
 function drawGame() {
@@ -123,5 +224,6 @@ function drawGame() {
     context.save();
     context.translate(-Math.round(game.cameraX), 0);
 
+    drawPlayer();
     context.restore();
 }
