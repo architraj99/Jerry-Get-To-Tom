@@ -2,6 +2,10 @@ const canvas = document.getElementById("game");
 const context = canvas.getContext("2d");
 const images = {};
 
+const spriteCrops = {
+    platform: [25, 33, 450, 89]
+};
+
 const game = {
     status: "idle",
     time: 45,
@@ -30,6 +34,7 @@ const player = {
 function loadImages() {
     const files = {
         background: "background.png",
+        platform: "platform.png",
         paper: "manuscript-paper.png",
         jerry: "jerry.png"
     };
@@ -88,6 +93,13 @@ function startCountdown() {
     }
 }
 
+function overlaps(first, second) {
+    return first.x < second.x + second.width &&
+    first.x + first.width > second.x && 
+    first.y < second.y + second.height &&
+    first.y + first.height > second.y;
+}
+
 function movePlayer(dt) {
     player.vx = 0;
 
@@ -123,14 +135,42 @@ function movePlayer(dt) {
     player.x += player.vx * dt;
     player.x = Math.max(0, Math.min(level.width - player.width, player.x));
 
+    for ( const platform of level.platforms) {
+        if (!overlaps(player, platform)) {
+            continue;
+        }
+
+        if (player.vx > 0) {
+            player.x = platform.x - player.width;
+        } else if (player.vx < 0) {
+            player.x = platform.x + platform.width;
+        }
+    }
+
+    const previousY = player.y;
     player.vy += 1750 * dt;
     player.y += player.vy * dt;
     player.grounded = false;
 
-    if (player.y + player.height >= 460) {
-        player.y = 460 - player.height;
-        player.vy = 0;
-        player.grounded = true;
+    for (const platform of level.platforms) {
+        if (!overlaps(player, platform)) {
+            continue;
+        }
+
+        if (
+            player.vy >= 0 &&
+            previousY + player.height <= platform.y + 1
+        ) {
+            player.y = platform.y - player.height;
+            player.vy = 0;
+            player.grounded = true;
+        } else if (
+            player.vy < 0 &&
+            previousY >= platform.y + platform.height - 1
+        ) {
+            player.y = platform.y + platform.height;
+            player.vy = 0;
+        }
     }
 }
 
@@ -185,6 +225,39 @@ function gameFrame(timestamp) {
     }
 }
 
+function drawSprite(name, x, y, width, height) {
+    const crop = spriteCrops[name];
+    context.drawImage(
+        images[name],
+        crop[0],
+        crop[1],
+        crop[2],
+        crop[3],
+        x,
+        y,
+        width,
+        height
+    );
+}
+
+function drawPlatforms() {
+    for (const platform of level.platforms) {
+        const pieces = Math.ceil(platform.width / 450);
+        const pieceWidth = platform.width / pieces;
+
+        for (let index = 0; index < pieces; index += 1) {
+            const x = platform.x + pieceWidth * index;
+            drawSprite(
+                "platform",
+                x, 
+                platform.y,
+                pieceWidth + 1,
+                pieceWidth * 89 / 450
+            );  
+        }
+    }
+}
+
 function drawPlayer() {
     const height = 72;
     const width = height * images.jerry.width / images.jerry.height;
@@ -223,6 +296,7 @@ function drawGame() {
     );
     context.save();
     context.translate(-Math.round(game.cameraX), 0);
+    drawPlatforms();
 
     drawPlayer();
     context.restore();
