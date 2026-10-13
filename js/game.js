@@ -3,7 +3,8 @@ const context = canvas.getContext("2d");
 const images = {};
 
 const spriteCrops = {
-    platform: [25, 33, 450, 89]
+    platform: [25, 33, 450, 89],
+    spikes: [5, 5, 110, 37]
 };
 
 const game = {
@@ -12,6 +13,9 @@ const game = {
     timerStartedAt: null,
     elapsedTime: 0,
     cameraX: 0,
+    checkpoint: 0,
+    invincible: 0,
+    penaltyTime: 0,
     assetsReady: false,
     lastFrame: null,
     accumulator: 0,
@@ -36,7 +40,8 @@ function loadImages() {
         background: "background.png",
         platform: "platform.png",
         paper: "manuscript-paper.png",
-        jerry: "jerry.png"
+        jerry: "jerry.png",
+        spikes: "spikes.png"
     };
 
     const loading = Object.keys(files).map(function (name) {
@@ -72,6 +77,9 @@ function startGame() {
     game.timerStartedAt = null;
     game.elapsedTime = 0;
     game.cameraX = 0;
+    game.checkpoint = 0;
+    game.invincible = 0;
+    game.penaltyTime = 0;
     game.lastFrame = null;
     game.accumulator = 0;
 
@@ -98,6 +106,30 @@ function overlaps(first, second) {
     first.x + first.width > second.x && 
     first.y < second.y + second.height &&
     first.y + first.height > second.y;
+}
+
+function resetPlayer() {
+    const checkpoint = level.checkpoints[game.checkpoint];
+
+    player.x = checkpoint.x;
+    player.y = checkpoint.y;
+    player.vx = 0;
+    player.vy = 0;
+    player.grounded = true;
+    player.coyoteTime = 0.1;
+    player.jumpBuffer = 0;
+    input.jumpQueued = false;
+    game.time = Math.max(0, game.time - 3);
+    game.invincible = 0.8;
+    game.penaltyTime = 1;
+    game.cameraX = Math.max(
+        0,
+        Math.min(level.width - canvas.width, player.x - 240)
+    );
+
+    if (game.time <= 0) {
+        finishGame(false);
+    }
 }
 
 function movePlayer(dt) {
@@ -174,9 +206,56 @@ function movePlayer(dt) {
     }
 }
 
+function touchesSpikes() {
+    for (const spikes of level.spikes) {
+        const hitbox = {
+            x: spikes.x + 7,
+            y: spikes.y - spikes.height + 6,
+            width: spikes.width - 14,
+            height: spikes.height - 6
+        };
+
+        if (overlaps(player, hitbox)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function updateCheckpoint() {
+    if (
+        !player.grounded ||
+        Math.abs(player.y + player.height - 460) > 1
+    ) {
+        return;
+    }
+
+    for (
+        let index = game.checkpoint + 1;
+        index < level.checkpoints.length;
+        index += 1
+    ) {
+        if (player.x >= level.checkpoints[index].x) {
+            game.checkpoint = index;
+        }
+    }
+}
+
 function updateGame(dt) {
+    game.invincible = Math.max(0, game.invincible - dt);
+    game.penaltyTime = Math.max(0, game.penaltyTime - dt);
     movePlayer(dt);
 
+    if (
+        player.y > level.height ||
+        (game.invincible === 0 && touchesSpikes())
+    ) {
+        resetPlayer();
+        return;
+    }
+
+    updateCheckpoint();
 }
 
 function finishGame(won) {
@@ -259,6 +338,10 @@ function drawPlatforms() {
 }
 
 function drawPlayer() {
+    if (game.invincible > 0 && Math.floor(game.invincible * 14) % 2 === 0) {
+        return;
+    }
+
     const height = 72;
     const width = height * images.jerry.width / images.jerry.height;
     const centerX = player.x + player.width / 2;
@@ -296,7 +379,26 @@ function drawGame() {
     );
     context.save();
     context.translate(-Math.round(game.cameraX), 0);
+    const ground = level.platforms.slice(0, 7);
+    context.fillStyle = "#543e28";
+
+    for (let index = 0; index < ground.length - 1; index += 1) {
+        const start = ground[index].x + ground[index].width;
+        const end = ground[index + 1].x;
+        context.fillRect(start, 460, end - start, 80);
+    }
+
     drawPlatforms();
+
+    for (const spikes of level.spikes) {
+        drawSprite(
+            "spikes",
+            spikes.x,
+            spikes.y - spikes.height,
+            spikes.width,
+            spikes.height
+        );
+    }
 
     drawPlayer();
     context.restore();
