@@ -28,6 +28,42 @@ body.playing {
     touch-action: none;
 }
 
+.hud {
+    position:absolute;
+    top: 2.6%;
+    left: 2%;
+    right: 2%;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    pointer-events: none;
+    font: bold clamp(12px, 2vw, 20px) "Courier New", monospace;
+}
+
+.hud > span {
+    background: #eed69b;
+    border: 2px solid #76532c;
+    padding: 7px 10px;
+}
+
+.hud #time.low {
+    color: #8a3926;
+}
+
+#penalty {
+    position: absolute;
+    top: 13%;
+    left: 2.5%;
+    color: #783522;
+    background: #eed69b;
+    font: bold 17px "Courier New", monospace;
+    padding: 2px 5px;
+}
+
+#penalty:empty {
+    display: none;
+}
+
 #touch-controls {
     display: none;
     width: min(660px, 100%);

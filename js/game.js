@@ -4,7 +4,8 @@ const images = {};
 
 const spriteCrops = {
     platform: [25, 33, 450, 89],
-    spikes: [5, 5, 110, 37]
+    spikes: [5, 5, 110, 37],
+    cheese: [4, 7, 41, 34]
 };
 
 const game = {
@@ -12,6 +13,8 @@ const game = {
     time: 45,
     timerStartedAt: null,
     elapsedTime: 0,
+    cheese: [],
+    collected: 0,
     cameraX: 0,
     checkpoint: 0,
     invincible: 0,
@@ -41,7 +44,8 @@ function loadImages() {
         platform: "platform.png",
         paper: "manuscript-paper.png",
         jerry: "jerry.png",
-        spikes: "spikes.png"
+        spikes: "spikes.png",
+        cheese: "cheese.png"
     };
 
     const loading = Object.keys(files).map(function (name) {
@@ -76,12 +80,20 @@ function startGame() {
     game.time = 45;
     game.timerStartedAt = null;
     game.elapsedTime = 0;
+    game.collected = 0;
     game.cameraX = 0;
     game.checkpoint = 0;
     game.invincible = 0;
     game.penaltyTime = 0;
     game.lastFrame = null;
     game.accumulator = 0;
+    game.cheese = level.cheese.map(function (piece) {
+        return {
+            x: piece.x,
+            y: piece.y,
+            taken: false
+        };
+    });
 
     player.x = level.start.x;
     player.y = level.start.y;
@@ -91,6 +103,7 @@ function startGame() {
     player.grounded = true;
     player.coyoteTime = 0.1;
     player.jumpBuffer = 0;
+    updateHud();
     drawGame();
     game.frameId = requestAnimationFrame(gameFrame);
 }
@@ -242,6 +255,22 @@ function updateCheckpoint() {
     }
 }
 
+function collectCheese() {
+    for (const cheese of game.cheese) {
+        const hitbox = {
+            x: cheese.x - 13,
+            y: cheese.y - 11,
+            width: 26,
+            height: 22,
+        };
+
+        if (!cheese.taken && overlaps(player, hitbox)) {
+            cheese.taken = true;
+            game.collected += 1;
+        }
+    }
+}
+
 function updateGame(dt) {
     game.invincible = Math.max(0, game.invincible - dt);
     game.penaltyTime = Math.max(0, game.penaltyTime - dt);
@@ -256,6 +285,14 @@ function updateGame(dt) {
     }
 
     updateCheckpoint();
+    collectCheese();
+
+    const cameraTarget = Math.max(
+        0,
+        Math.min(level.width - canvas.width, player.x - 300)
+    );
+    game.cameraX += (cameraTarget - game.cameraX) * Math.min(1, dt * 8); 
+
 }
 
 function finishGame(won) {
@@ -263,6 +300,19 @@ function finishGame(won) {
     clearInput();
 }
 
+function updateHud() {
+    const time = document.getElementById("time");
+    time.textContent = "TIME: " + Math.max(0, game.time).toFixed(1);
+    time.classList.toggle("low", game.time < 10);
+    document.getElementById("cheese-count").textContent = "CHEESE " + game.collected + "/" + level.cheese.length;
+
+    const penalty = document.getElementById("penalty");
+    penalty.textContent = "";
+
+    if (game.penaltyTime > 0 ) {
+        penalty.textContent = "-3 SECONDS";
+    }
+}
 
 function gameFrame(timestamp) {
     if (game.lastFrame === null) {
@@ -297,6 +347,7 @@ function gameFrame(timestamp) {
         }
     }
 
+    updateHud();
     drawGame();
 
     if (game.status === "playing") {
@@ -398,6 +449,18 @@ function drawGame() {
             spikes.width,
             spikes.height
         );
+    }
+
+    for (const cheese of game.cheese) {
+        if (!cheese.taken) {
+            drawSprite(
+                "cheese",
+                cheese.x - 13,
+                cheese.y - 11,
+                26,
+                 22
+            );
+        }
     }
 
     drawPlayer();
