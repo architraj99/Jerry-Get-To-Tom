@@ -50,6 +50,18 @@ body.playing {
     color: #8a3926;
 }
 
+.hud .medicine-hud {
+    margin-left: auto;
+    padding: 2px 5px;
+}
+
+.medicine-hud img {
+    display:block;
+    width:25px;
+    height: 30px;
+    image-rendering: pixelated;
+}
+
 #penalty {
     position: absolute;
     top: 13%;

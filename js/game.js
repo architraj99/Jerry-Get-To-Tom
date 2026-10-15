@@ -4,6 +4,10 @@ const images = {};
 
 const spriteCrops = {
     platform: [25, 33, 450, 89],
+    restArea: [16, 71, 225, 70],
+    tomInjured: [11, 33, 136, 77],
+    tomHealed: [29, 11, 112, 119],
+    medicine: [8, 6, 34, 48],
     spikes: [5, 5, 110, 37],
     cheese: [4, 7, 41, 34]
 };
@@ -19,6 +23,8 @@ const game = {
     checkpoint: 0,
     invincible: 0,
     penaltyTime: 0,
+    healingTime: 0,
+    healed: false,
     assetsReady: false,
     lastFrame: null,
     accumulator: 0,
@@ -87,6 +93,10 @@ function loadImages() {
         platform: "platform.png",
         paper: "manuscript-paper.png",
         jerry: "jerry.png",
+        tomInjured: "tom-injured.png",
+        tomHealed: "tom-healed.png",
+        restArea: "tom-rest-area.png",
+        medicine: "medicine.png",
         spikes: "spikes.png",
         cheese: "cheese.png"
     };
@@ -128,6 +138,8 @@ function startGame() {
     game.checkpoint = 0;
     game.invincible = 0;
     game.penaltyTime = 0;
+    game.healingTime = 0;
+    game.healed = false;
     game.lastFrame = null;
     game.accumulator = 0;
     game.cheese = level.cheese.map(function (piece) {
@@ -317,6 +329,13 @@ function collectCheese() {
     }
 }
 
+function nearTom() {
+    const distanceX = Math.abs(player.x + player.width / 2 - level.tom.x);
+    const distanceY = Math.abs(player.y + player.height - level.tom.feetY);
+
+    return distanceX < 62 && distanceY < 55 && player.grounded;
+}
+
 function updateGame(dt) {
     game.invincible = Math.max(0, game.invincible - dt);
     game.penaltyTime = Math.max(0, game.penaltyTime - dt);
@@ -339,6 +358,15 @@ function updateGame(dt) {
     );
     game.cameraX += (cameraTarget - game.cameraX) * Math.min(1, dt * 8); 
 
+    if (nearTom()) {
+        game.status = "healing";
+        game.healingTime = 0;
+        player.vx = 0;
+        player.vy = 0;
+        player.facing = 1;
+        clearInput();
+        playTone(570, 0.15);
+    }
 }
 
 function finishGame(won) {
@@ -391,12 +419,24 @@ function gameFrame(timestamp) {
                 game.accumulator -= 1 / 120;
             }
         }
+    } 
+    else if (game.status === "healing") {
+        game.healingTime += elapsed;
+
+        if (game.healingTime >= 1 && !game.healed) {
+            game.healed = true;
+            playTone(900, 0.22);
+        }
+
+        if (game.healingTime >= 1.45) {
+            finishGame(true);
+        }
     }
 
     updateHud();
     drawGame();
 
-    if (game.status === "playing") {
+    if (game.status === "playing" || game.status === "healing") {
         game.frameId = requestAnimationFrame(gameFrame);
     }
 }
@@ -450,7 +490,44 @@ function drawPlayer() {
     context.drawImage(images.jerry, -width / 2, -height, width, height);
     context.imageSmoothingEnabled = false;
 
+    if (game.status === "playing") {
+        drawSprite("medicine", 12, -34, 10, 14);
+    }
+
     context.restore();
+}
+
+function drawTom() {
+    const rest = level.restArea;
+    drawSprite("restArea", rest.x, rest.y, rest.width, rest.height);
+
+    if (game.healed) {
+        drawSprite(
+            "tomHealed",
+            level.tom.x - 44,
+            level.tom.feetY - 95,
+            89,
+            95
+        );
+    } else {
+        drawSprite(
+            "tomInjured",
+            level.tom.x -75,
+            level.tom.feetY - 85,
+            150,
+            85
+        );
+    }
+
+    if (game.status === "healing" && !game.healed) {
+        drawSprite(
+            "medicine",
+            level.tom.x - 88,
+            level.tom.feetY - 116,
+            25,
+            35
+        );
+    }
 }
 
 function drawGame() {
@@ -509,6 +586,7 @@ function drawGame() {
         }
     }
 
+    drawTom();
     drawPlayer();
     context.restore();
 }
