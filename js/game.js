@@ -38,6 +38,49 @@ const player = {
     jumpBuffer: 0
 };
 
+let audioContext = null;
+
+function prepareAudio() {
+    try {
+        const AudioEngine = window.AudioContext || window.webkitAudioContext;
+
+        if (!AudioEngine) {
+            return;
+        }
+
+        if (!audioContext) {
+            audioContext = new AudioEngine();
+        }
+
+        audioContext.resume().catch(function () {});
+    } catch (error) {
+        audioContext = null;
+    }
+}
+
+function playTone(frequency, duration) {
+    if (!audioContext || audioContext.state !== "running") {
+        return;
+    }
+
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    const now = audioContext.currentTime;
+
+    oscillator.type = "triangle";
+    oscillator.frequency.setValueAtTime(frequency, now);
+    gain.gain.setValueAtTime(0.018, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+    oscillator.start(now);
+    oscillator.stop(now + duration);
+    oscillator.onended = function () {
+        oscillator.disconnect();
+        gain.disconnect();
+    };
+}
+
 function loadImages() {
     const files = {
         background: "background.png",
@@ -139,6 +182,7 @@ function resetPlayer() {
         0,
         Math.min(level.width - canvas.width, player.x - 240)
     );
+    playTone(130, 0.12);
 
     if (game.time <= 0) {
         finishGame(false);
@@ -174,6 +218,7 @@ function movePlayer(dt) {
         player.grounded = false;
         player.coyoteTime = 0;
         player.jumpBuffer = 0;
+        playTone(430, 0.07);
     }
 
     player.jumpBuffer = Math.max(0, player.jumpBuffer - dt);
@@ -261,12 +306,13 @@ function collectCheese() {
             x: cheese.x - 13,
             y: cheese.y - 11,
             width: 26,
-            height: 22,
+            height: 22
         };
 
         if (!cheese.taken && overlaps(player, hitbox)) {
             cheese.taken = true;
             game.collected += 1;
+            playTone(780, 0.08);
         }
     }
 }
