@@ -95,3 +95,33 @@
     font: 14px Arial, sans-serif;
     overflow-wrap: anywhere;
 }
+
+.result-screen {
+    background: rgb(53 35 20 / 45%);
+}
+
+#fail-tom {
+    display: block;
+    width: 200px;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    image-rendering: pixelated;
+}
+
+.paper .reward {
+    font: bold 29px "Courier New", monospace;
+    margin-top: 32px;
+}
+
+#final-time {
+    font-family: "Courier New", monospace;
+    transform: scale(.84);
+}
+
+.result-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}

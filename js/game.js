@@ -372,6 +372,14 @@ function updateGame(dt) {
 function finishGame(won) {
     game.status = "finished";
     clearInput();
+    updateHud();
+    document.dispatchEvent(new CustomEvent("gameresult", {
+        detail: {
+            won: won,
+            time: game.time,
+            elapsedTime: game.elapsedTime
+        }
+    }));
 }
 
 function updateHud() {

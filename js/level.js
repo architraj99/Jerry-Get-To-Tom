@@ -156,7 +156,7 @@ const level = {
         { x: 2505, y: 402 },
         { x: 2995, y: 402 }
     ],
-    tom: { x: 340, feetY: 420},
+    tom: { x: 3420, feetY: 420},
     restArea: {
         x: 3300,
         y: 390,
