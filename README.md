@@ -1,102 +1,54 @@
-### Hi! Welcome to your VS-Code Space!
+Jerry! Get to Tom
 
-You can use this just like you would vs-code on your own computer! For security reasons, we can not give you root access to the container, but we have preinstalled a number of development tools for you!
+A small Tom and Jerry browser platformer....
 
-#### Pre-installed tools:
-If a tool you need is not listed, attempt to install it using one of the package managers listed, and if that is not possible, ask in #spaces on slack and I can probably add the tool!
+Jerry carries medicine through from old house to reach an injured Tom before a 45 second countdown runs out...
 
-If a tool listed here is not working, wait a few minutes and try again! The installation is ran in the background upon space creation to minimize space creation times, so you might have to wait a minute or two for all tools to become available
+Jump across wooden blocks andd  avoid spikes and gaps  and collect  cheese along the way.....
 
-##### Hackatime
 
-Make sure to set your hackatime api key in settings! if you have done that, Hackatime has been auto installed and set up for you, and will be tracking your time
 
-##### General
-```
-git
-github-cli
-curl
-wget
-nano
-vim
-unzip
-zip
-build-essentials
-cmake
-pkg-config
-jq
-tree
-htop
-tmux
-less
-ripgrep
-fd-find
-rsync
-openssh-client
-apt-transport-https
-ca-certificates
-gnupg
-```
-##### Python:
-```
-python3
-python3-pip
-python3-venv
-python3-dev
-python3-setuptools
-uv
-```
+## The idea
 
-##### Javascript:
-```
-nodejs
-npm
-yarn
-pnpm
-```
+This project started with a short rescue story: 
+Tom is hurt.... and Jerry has to bring his medicine. 
 
-##### Java:
-```
-openjdk-17-jdk
-openjdk-17-jre
-```
 
-##### Rust:
-```
-rust
-cargo
-```
 
-##### PHP:
-```
-php 
-php-cli 
-php-common 
-php-curl 
-php-json 
-php-mbstring 
-php-xml 
-php-zip
-```
+## How to play
 
-##### Database:
-```
-sqlite3
-postgresql-client
-mysql-client
-redis-tools
-```
+1. Accept the mission on the opening manuscript page....
+2. Read the instructions and press PLAY
+3. The timer stays at TIME: 45 sec until you do any movements 
+4. Cross the house and reach Tom on the final ground section.....
 
-##### Ruby:
-```
-ruby
-rails
-```
 
-###### Other:
-```
-go
-crystal
-ffmpeg
-imagemagick
-```
+
+A - MOVE LEFT
+
+D - MOVE RIGHT 
+
+W OR SPACE - JUMP
+
+## AI USAGE
+ I used ai only to implement a setting where timer starts only when the jerry move... 
+ else no ai used ....
+
+
+## Screenshots
+
+<img width="1280" height="900" alt="image" src="https://github.com/user-attachments/assets/dd46262c-bd5f-462b-babf-7569c21e26dc" />
+<img width="1280" height="900" alt="image" src="https://github.com/user-attachments/assets/69be6ff8-2006-4114-8b1c-bd4a9523f35f" />
+
+
+## Built with
+
+- HTML 
+- CSS 
+- Vanilla JavaScript 
+
+
+## Artwork and credits
+
+All artwork is done by myself, everything in PAINT ... only the jerry is taken from internet ( google images)
+
