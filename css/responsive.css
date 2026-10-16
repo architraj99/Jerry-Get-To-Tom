@@ -1,0 +1,113 @@
+@media (max-width: 600px) {
+    .screen {
+        padding: 7px;
+    }
+
+    .paper {
+        min-height: 500px;
+        padding: 64px 35px 60px;
+    }
+
+    .paper h1 {
+        font-size: 28px;
+    }
+
+    .paper h2 {
+        font-size: 20px;
+    }
+
+    .paper p {
+        font-size: 16px;
+    }
+
+    .instructions-paper {
+        padding-top: 47px;
+        padding-bottom: 47px;
+    }
+
+    .instructions-paper h1 {
+        font-size: 22px;
+        margin-top: 8px;
+    }
+
+    .controls-list dd {
+        font-size: 14px;
+    }
+
+    .hud {
+        gap: 7px;
+    }
+
+    .hud > span {
+        padding: 4px 6px;
+    }
+
+    .medicine-hud img {
+        width: 17px;
+        height: 20px;
+    }
+
+    #penalty {
+        top: 18%;
+        font-size: 12px;
+    }
+}
+
+@media (max-height: 560px) and (min-width: 601px) {
+    #fail-tom {
+        width: 160px;
+    }
+
+    .paper {
+        min-height: 370px;
+        width: min(650px, 100%);
+        padding: 43px 68px 42px;
+    }
+
+    .paper h1 {
+        margin: 4px 0 15px;
+        font-size: 25px;
+    }
+
+    .paper h2 {
+        margin-bottom: 15px;
+        font-size: 18px;
+    }
+
+    .paper p {
+        margin: 9px 0;
+        font-size: 16px;
+    }
+
+    .controls-list {
+        margin-bottom: 10px;
+    }
+
+    .controls-list div {
+        grid-template-rows: 12px 16px;
+        margin: 7px 0;
+    }
+
+    .controls-list dt {
+        font-size: 12px;
+        line-height: 12px;
+    }
+
+    .controls-list dd {
+        font-size: 14px;
+        line-height: 12px;
+    }
+
+    .paper > button, .result-buttons {
+        margin-top: 10px;
+    }
+
+    #touch-controls {
+        height: 66px;
+        padding: 5px 18px;
+    }
+
+    #touch-controls button {
+        min-height: 50px;
+    }
+}
