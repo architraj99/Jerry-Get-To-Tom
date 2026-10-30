@@ -20,7 +20,7 @@ function updateHeldInput() {
       heldKeys.has("KeyD") ||
       touches.includes("right");
 
-    document.querySelectorAll("[data-control").forEach(function (button) {
+    document.querySelectorAll("[data-control]").forEach(function (button) {
         button.classList.toggle("held", touches.includes(button.dataset.control));
     });
 }

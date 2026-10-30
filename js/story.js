@@ -16,7 +16,6 @@ function playFromButton() {
     return;
   }
 
-  enterFullscreen();
   prepareAudio();
   showScreen("game");
   resizeGame();
