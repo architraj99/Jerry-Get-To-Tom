@@ -18,7 +18,6 @@ function playFromButton() {
 
   prepareAudio();
   showScreen("game");
-  resizeGame();
   startGame();
   canvas.focus();
 }
