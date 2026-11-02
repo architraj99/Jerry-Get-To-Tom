@@ -125,3 +125,8 @@
     gap: 12px;
     flex-wrap: wrap;
 }
+
+.paper .run-stats {
+    margin: 12px 0 0;
+    font: bold 15px "Courier New", monospace;
+}

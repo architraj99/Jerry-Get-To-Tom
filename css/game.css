@@ -76,6 +76,20 @@ body.playing {
     display: none;
 }
 
+#bonus {
+    position: absolute;
+    top: 10%;
+    right: 2.5%;
+    color: #632919;
+    background: #ebd263;
+    font: bold clamp(20px, 5vw, 20px) "Courier New", monospace;
+    padding: 2px 5px;
+}
+
+#bonus:empty {
+    display: none;
+}
+
 #touch-controls {
     display: none;
     width: min(660px, 100%);

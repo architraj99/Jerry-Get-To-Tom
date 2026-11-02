@@ -19,6 +19,11 @@ const game = {
     elapsedTime: 0,
     cheese: [],
     collected: 0,
+    jumps: 0,
+    deaths: 0,
+    bonusSeconds: 0,
+    rewardMilestones: [],
+    bonusTime: 0,
     cameraX: 0,
     checkpoint: 0,
     invincible: 0,
@@ -134,6 +139,11 @@ function startGame() {
     game.timerStartedAt = null;
     game.elapsedTime = 0;
     game.collected = 0;
+    game.jumps = 0;
+    game.deaths = 0;
+    game.bonusSeconds = 0;
+    game.rewardMilestones = [];
+    game.bonusTime = 0;
     game.cameraX = 0;
     game.checkpoint = 0;
     game.invincible = 0;
@@ -178,6 +188,7 @@ function overlaps(first, second) {
 
 function resetPlayer() {
     const checkpoint = level.checkpoints[game.checkpoint];
+    game.deaths += 1;
 
     player.x = checkpoint.x;
     player.y = checkpoint.y;
@@ -226,6 +237,7 @@ function movePlayer(dt) {
     }
 
     if (player.jumpBuffer > 0 && player.coyoteTime > 0) {
+        game.jumps +=1;
         player.vy = -660;
         player.grounded = false;
         player.coyoteTime = 0;
@@ -325,8 +337,27 @@ function collectCheese() {
             cheese.taken = true;
             game.collected += 1;
             playTone(780, 0.08);
+            rewardCheese();
         }
     }
+}
+
+function rewardCheese() {
+    const milestone = game.collected;
+
+    if (milestone !== 3 && milestone !== 6) {
+        return;
+    }
+
+    if (game.rewardMilestones.includes(milestone)) {
+        return;
+    }
+
+    game.rewardMilestones.push(milestone);
+    game.time += 2;
+    game.bonusSeconds += 2;
+    game.bonusTime = 1.4;
+    playTone(960, 0.1);
 }
 
 function nearTom() {
@@ -339,6 +370,7 @@ function nearTom() {
 function updateGame(dt) {
     game.invincible = Math.max(0, game.invincible - dt);
     game.penaltyTime = Math.max(0, game.penaltyTime - dt);
+    game.bonusTime = Math.max(0, game.bonusTime - dt);
     movePlayer(dt);
 
     if (
@@ -377,7 +409,11 @@ function finishGame(won) {
         detail: {
             won: won,
             time: game.time,
-            elapsedTime: game.elapsedTime
+            elapsedTime: game.elapsedTime,
+            cheese: game.collected,
+            jumps: game.jumps,
+            deaths: game.deaths,
+            bonusSeconds: game.bonusSeconds
         }
     }));
 }
@@ -393,6 +429,13 @@ function updateHud() {
 
     if (game.penaltyTime > 0 ) {
         penalty.textContent = "-3 SECONDS";
+    }
+
+    const bonus = document.getElementById("bonus");
+    bonus.textContent = "";
+
+    if (game.bonusTime > 0) {
+        bonus.textContent = "+2 SECONDS";
     }
 }
 

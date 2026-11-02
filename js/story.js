@@ -30,6 +30,10 @@ function showResult(event) {
   const finalTime = document.getElementById("final-time");
   const retry = document.getElementById("retry");
   document.getElementById("fail-tom").hidden = result.won;
+  document.getElementById("run-stats").textContent = "CHEESE: " + result.cheese + "/" + level.cheese.length +
+  " JUMPS: " + result.jumps +
+  " RESETS: " + result.deaths +
+  " BONUS: +" + result.bonusSeconds + "s";
 
   if (result.won) {
     title.textContent = "THANKS JERRY!";
