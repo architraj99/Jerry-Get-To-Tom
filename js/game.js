@@ -164,9 +164,9 @@ function startGame() {
     });
 
     game.platforms = level.platforms.map(function (platform) {
-        return Object.assign({}, platforms, {
+        return Object.assign({}, platform, {
             state: "intact",
-            remaining: 0;
+            remaining: 0
         });
     });
 
@@ -520,7 +520,7 @@ function drawSprite(name, x, y, width, height) {
 }
 
 function drawPlatforms() {
-    for (const platform of game.platform) {
+    for (const platform of game.platforms) {
         if (platform.state === "collapsed") {
             continue;
         }
@@ -532,7 +532,7 @@ function drawPlatforms() {
         for (let index = 0; index < pieces; index += 1) {
             const x = platform.x + pieceWidth * index;
             drawSprite(
-                platform.fragile "cracked" : "platform",
+                platform.fragile ? "cracked" : "platform",
                 x, 
                 platform.y,
                 pieceWidth + 1,
@@ -562,7 +562,7 @@ function drawPlayer() {
         drawSprite("medicine", 12, -34, 10, 14);
     }
 
-    context.res);tore(
+    context.restore();
 }
 
 function drawTom() {
@@ -667,7 +667,7 @@ function armPlatform(platform) {
 }
 
 function updateCrumbling(dt) {
-    for (const platform of game.platform) {
+    for (const platform of game.platforms) {
         if (!platform.fragile || platform.state === "intact"){
             continue;
         }
