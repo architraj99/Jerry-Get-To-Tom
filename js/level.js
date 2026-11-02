@@ -164,3 +164,6 @@ const level = {
         height: 80
     }
 };
+
+level.platforms[8].fragile = true;
+level.platforms[12].fragile = true;

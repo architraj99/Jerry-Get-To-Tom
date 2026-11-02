@@ -4,6 +4,7 @@ const images = {};
 
 const spriteCrops = {
     platform: [25, 33, 450, 89],
+    cracked: [25, 33, 450, 89],
     restArea: [16, 71, 225, 70],
     tomInjured: [11, 33, 136, 77],
     tomHealed: [29, 11, 112, 119],
@@ -33,6 +34,7 @@ const game = {
     assetsReady: false,
     lastFrame: null,
     accumulator: 0,
+    platforms: [],
     frameId: 0
 };
 
@@ -96,6 +98,7 @@ function loadImages() {
     const files = {
         background: "background.png",
         platform: "platform.png",
+        cracked: "platform-cracked.png",
         paper: "manuscript-paper.png",
         jerry: "jerry.png",
         tomInjured: "tom-injured.png",
@@ -158,6 +161,13 @@ function startGame() {
             y: piece.y,
             taken: false
         };
+    });
+
+    game.platforms = level.platforms.map(function (platform) {
+        return Object.assign({}, platforms, {
+            state: "intact",
+            remaining: 0;
+        });
     });
 
     player.x = level.start.x;
@@ -249,8 +259,8 @@ function movePlayer(dt) {
     player.x += player.vx * dt;
     player.x = Math.max(0, Math.min(level.width - player.width, player.x));
 
-    for ( const platform of level.platforms) {
-        if (!overlaps(player, platform)) {
+    for ( const platform of game.platforms) {
+        if (platform.state === "collapsed" || !overlaps(player, platform)) {
             continue;
         }
 
@@ -278,6 +288,7 @@ function movePlayer(dt) {
             player.y = platform.y - player.height;
             player.vy = 0;
             player.grounded = true;
+            armPlatform(platform);
         } else if (
             player.vy < 0 &&
             previousY >= platform.y + platform.height - 1
@@ -371,6 +382,7 @@ function updateGame(dt) {
     game.invincible = Math.max(0, game.invincible - dt);
     game.penaltyTime = Math.max(0, game.penaltyTime - dt);
     game.bonusTime = Math.max(0, game.bonusTime - dt);
+    updateCrumbling(dt);
     movePlayer(dt);
 
     if (
@@ -508,6 +520,11 @@ function drawSprite(name, x, y, width, height) {
 }
 
 function drawPlatforms() {
+    for (const platform of game.platform) {
+        if (platform.state === "collapsed") {
+            continue;
+        }
+    }
     for (const platform of level.platforms) {
         const pieces = Math.ceil(platform.width / 450);
         const pieceWidth = platform.width / pieces;
@@ -515,7 +532,7 @@ function drawPlatforms() {
         for (let index = 0; index < pieces; index += 1) {
             const x = platform.x + pieceWidth * index;
             drawSprite(
-                "platform",
+                platform.fragile "cracked" : "platform",
                 x, 
                 platform.y,
                 pieceWidth + 1,
@@ -545,7 +562,7 @@ function drawPlayer() {
         drawSprite("medicine", 12, -34, 10, 14);
     }
 
-    context.restore();
+    context.res);tore(
 }
 
 function drawTom() {
@@ -640,4 +657,35 @@ function drawGame() {
     drawTom();
     drawPlayer();
     context.restore();
+}
+
+function armPlatform(platform) {
+    if (platform.fragile && platform.state === "intact") {
+        platform.state = "breaking";
+        platform.remaining = 0.65;
+    }
+}
+
+function updateCrumbling(dt) {
+    for (const platform of game.platform) {
+        if (!platform.fragile || platform.state === "intact"){
+            continue;
+        }
+
+        platform.remaining -= dt;
+
+        if (platform.remaining > 0) {
+            continue;
+        }
+
+        if (platform.state === "breaking") {
+            platform.state = "collapsed";
+            platform.remaining = 3.5;
+        }
+        
+        else if (!overlaps(player, platform)) {
+            platform.state = "intact";
+            platform.remaining = 0;
+        }
+    }
 }
