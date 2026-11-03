@@ -167,3 +167,8 @@ const level = {
 
 level.platforms[8].fragile = true;
 level.platforms[12].fragile = true;
+
+level.cushions = [
+    { x: 850, y: 445, width: 64, height: 35},
+    { x: 3000, y: 445, width: 64, height: 35 }
+];

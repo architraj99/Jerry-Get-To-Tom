@@ -5,6 +5,7 @@ const images = {};
 const spriteCrops = {
     platform: [25, 33, 450, 89],
     cracked: [25, 33, 450, 89],
+    cushion: [10, 15, 100, 70],
     restArea: [16, 71, 225, 70],
     tomInjured: [11, 33, 136, 77],
     tomHealed: [29, 11, 112, 119],
@@ -34,6 +35,7 @@ const game = {
     assetsReady: false,
     lastFrame: null,
     accumulator: 0,
+    cushions: [],
     platforms: [],
     frameId: 0
 };
@@ -99,6 +101,7 @@ function loadImages() {
         background: "background.png",
         platform: "platform.png",
         cracked: "platform-cracked.png",
+        cushion: "cushion.png",
         paper: "manuscript-paper.png",
         jerry: "jerry.png",
         tomInjured: "tom-injured.png",
@@ -168,6 +171,10 @@ function startGame() {
             state: "intact",
             remaining: 0
         });
+    });
+    
+    game.cushions = level.cushions.map(function (pad) {
+        return Object.assign({}, pad, {squash: 0 });
     });
 
     player.x = level.start.x;
@@ -383,7 +390,10 @@ function updateGame(dt) {
     game.penaltyTime = Math.max(0, game.penaltyTime - dt);
     game.bonusTime = Math.max(0, game.bonusTime - dt);
     updateCrumbling(dt);
+
+    const previousFeet = player.y + player.height;
     movePlayer(dt);
+    bounceCushions(dt, previousFeet);
 
     if (
         player.y > level.height ||
@@ -631,6 +641,7 @@ function drawGame() {
     }
 
     drawPlatforms();
+    drawCushions();
 
     for (const spikes of level.spikes) {
         drawSprite(
@@ -687,5 +698,43 @@ function updateCrumbling(dt) {
             platform.state = "intact";
             platform.remaining = 0;
         }
+    }
+}
+
+function bounceCushions(dt, previousFeet) {
+    for (const pad of game.cushions) {
+        pad.squash = Math.max(0, pad.squash - dt);
+
+        if (player.vy < 0 || previousFeet > pad.y + 1) {
+            continue;
+        }
+
+        if (player.x + player.width <= pad.x ||
+            player.x >= pad.x + pad.width
+        ) {
+            continue;
+        }
+
+        player.y = pad.y - player.height;
+        player.vy = -900;
+        player.grounded = false;
+        player.coyoteTime = 0;
+        player.jumpBuffer = 0;
+        pad.squash = 0.2;
+        playTone(500, 0.5);
+    }
+
+}
+
+function drawCushions () {
+    for (const pad of game.cushions) {
+        const compression = pad.squash > 0 ? 5 : 0;
+        drawSprite(
+            "cushion",
+            pad.x,
+            pad.y + compression,
+            pad.width,
+            pad.height - compression
+        );
     }
 }
