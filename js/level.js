@@ -83,7 +83,7 @@ const level = {
         },
         {
             x: 2660,
-            y: 365,
+            y: 250,
             width: 100,
             height: 22
         },
@@ -144,7 +144,7 @@ const level = {
         { x: 1275, y: 328},
         { x: 1800, y: 248},
         { x: 2235, y: 328},
-        { x: 2740, y: 328 },
+        { x: 2690, y: 230},
         { x: 3265, y: 248 }
     ],
     checkpoints: [
@@ -170,18 +170,18 @@ level.platforms[12].fragile = true;
 
 level.cushions = [
     { x: 850, y: 445, width: 64, height: 35},
-    { x: 3000, y: 445, width: 64, height: 35 }
+    { x: 2990, y: 445, width: 64, height: 35 }
 ];
 
 level.shelves = [
     {
-        startX: 300,
-        endX: 350,
-        startY: 600,
-        endY: 600,
+        startX: 920,
+        endX: 980,
+        startY: 400,
+        endY: 350,
         width: 70,
-        height: 10,
-        speed: 20
+        height: 20,
+        speed: 50
     },
     {
         startX: 2500,

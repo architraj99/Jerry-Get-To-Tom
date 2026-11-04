@@ -6,7 +6,7 @@ const spriteCrops = {
     platform: [25, 33, 450, 89],
     cracked: [25, 33, 450, 89],
     cushion: [10, 15, 100, 70],
-    shelf: [25, 33, 450, 110],
+    shelf: [25, 33, 450, 111],
     restArea: [16, 71, 225, 70],
     tomInjured: [11, 33, 136, 77],
     tomHealed: [29, 11, 112, 119],
@@ -187,6 +187,7 @@ function startGame() {
             y: data.startY,
             moving: true,
             direction: 1,
+            progress: 0,
             state: "intact"
         }));
     }
@@ -302,8 +303,8 @@ function movePlayer(dt) {
     player.y += player.vy * dt;
     player.grounded = false;
 
-    for (const platform of level.platforms) {
-        if (!overlaps(player, platform)) {
+    for (const platform of game.platforms) {
+        if (platform.state === "collapsed" || !overlaps(player, platform)) {
             continue;
         }
 
@@ -560,18 +561,18 @@ function drawPlatforms() {
         let image = "platform";
         if (platform.fragile) image = "cracked";
         if (platform.moving) image = "shelf";
-        const imageHeight = platform.moving ? 110 : 90;
+        const imageHeight = platform.moving ? 111 : 89;
         const pieces = Math.ceil(platform.width / 450);
         const pieceWidth = platform.width / pieces;
 
         for (let index = 0; index < pieces; index += 1) {
             const x = platform.x + pieceWidth * index;
             drawSprite(
-                platform.fragile ? "cracked" : "platform",
+                image,
                 x, 
                 platform.y,
                 pieceWidth + 1,
-                pieceWidth * 89 / 450
+                pieceWidth * imageHeight / 450
             );  
         }
     }
@@ -784,7 +785,7 @@ function updateShelves(dt) {
 
         shelf.progress += shelf.direction * shelf.speed * dt / distance;
 
-        if (shelf.progress > 0) {
+        if (shelf.progress >= 1) {
             shelf.progress = 1;
             shelf.direction = -1;
         }
