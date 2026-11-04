@@ -172,3 +172,24 @@ level.cushions = [
     { x: 850, y: 445, width: 64, height: 35},
     { x: 3000, y: 445, width: 64, height: 35 }
 ];
+
+level.shelves = [
+    {
+        startX: 300,
+        endX: 350,
+        startY: 600,
+        endY: 600,
+        width: 70,
+        height: 10,
+        speed: 20
+    },
+    {
+        startX: 2500,
+        endX: 2500,
+        startY: 400,
+        endY: 350,
+        width: 70,
+        height: 10,
+        speed: 20
+    }
+];

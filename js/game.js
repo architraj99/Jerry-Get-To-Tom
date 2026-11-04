@@ -6,6 +6,7 @@ const spriteCrops = {
     platform: [25, 33, 450, 89],
     cracked: [25, 33, 450, 89],
     cushion: [10, 15, 100, 70],
+    shelf: [25, 33, 450, 110],
     restArea: [16, 71, 225, 70],
     tomInjured: [11, 33, 136, 77],
     tomHealed: [29, 11, 112, 119],
@@ -36,6 +37,8 @@ const game = {
     lastFrame: null,
     accumulator: 0,
     cushions: [],
+    standingOn: null,
+    carriedX: 0,
     platforms: [],
     frameId: 0
 };
@@ -102,6 +105,7 @@ function loadImages() {
         platform: "platform.png",
         cracked: "platform-cracked.png",
         cushion: "cushion.png",
+        shelf: "moving-shelf.png",
         paper: "manuscript-paper.png",
         jerry: "jerry.png",
         tomInjured: "tom-injured.png",
@@ -177,6 +181,19 @@ function startGame() {
         return Object.assign({}, pad, {squash: 0 });
     });
 
+    for (const data of level.shelves) {
+        game.platforms.push(Object.assign({}, data, {
+            x: data.startX,
+            y: data.startY,
+            moving: true,
+            direction: 1,
+            state: "intact"
+        }));
+    }
+
+    game.standingOn = null;
+    game.carriedX = 0;
+
     player.x = level.start.x;
     player.y = level.start.y;
     player.vx = 0;
@@ -206,6 +223,7 @@ function overlaps(first, second) {
 function resetPlayer() {
     const checkpoint = level.checkpoints[game.checkpoint];
     game.deaths += 1;
+    game.standingOn = null;
 
     player.x = checkpoint.x;
     player.y = checkpoint.y;
@@ -230,6 +248,7 @@ function resetPlayer() {
 }
 
 function movePlayer(dt) {
+    game.standingOn = null;
     player.vx = 0;
 
     if (input.left && !input.right) {
@@ -271,9 +290,9 @@ function movePlayer(dt) {
             continue;
         }
 
-        if (player.vx > 0) {
+        if (player.vx > 0 || game.carriedX > 0 ){
             player.x = platform.x - player.width;
-        } else if (player.vx < 0) {
+        } else if (player.vx < 0 || game.carriedX < 0) {
             player.x = platform.x + platform.width;
         }
     }
@@ -295,6 +314,9 @@ function movePlayer(dt) {
             player.y = platform.y - player.height;
             player.vy = 0;
             player.grounded = true;
+            if (platform.moving) {
+                game.standingOn = platform;
+            }
             armPlatform(platform);
         } else if (
             player.vy < 0 &&
@@ -389,6 +411,7 @@ function updateGame(dt) {
     game.invincible = Math.max(0, game.invincible - dt);
     game.penaltyTime = Math.max(0, game.penaltyTime - dt);
     game.bonusTime = Math.max(0, game.bonusTime - dt);
+    updateShelves(dt);
     updateCrumbling(dt);
 
     const previousFeet = player.y + player.height;
@@ -534,8 +557,10 @@ function drawPlatforms() {
         if (platform.state === "collapsed") {
             continue;
         }
-    }
-    for (const platform of level.platforms) {
+        let image = "platform";
+        if (platform.fragile) image = "cracked";
+        if (platform.moving) image = "shelf";
+        const imageHeight = platform.moving ? 110 : 90;
         const pieces = Math.ceil(platform.width / 450);
         const pieceWidth = platform.width / pieces;
 
@@ -714,6 +739,9 @@ function bounceCushions(dt, previousFeet) {
         ) {
             continue;
         }
+        if (player.y + player.height < pad.y || pad.squash > 0) {
+            continue;
+        }
 
         player.y = pad.y - player.height;
         player.vy = -900;
@@ -736,5 +764,42 @@ function drawCushions () {
             pad.width,
             pad.height - compression
         );
+    }
+}
+
+function updateShelves(dt) {
+    game.carriedX = 0;
+
+    for (const shelf of game.platforms) {
+        if (!shelf.moving) {
+            continue;
+        }
+        const distance = Math.hypot (
+            shelf.endX - shelf.startX,
+            shelf.endY - shelf.startY
+        );
+
+        const previousX = shelf.x;
+        const previousY = shelf.y;
+
+        shelf.progress += shelf.direction * shelf.speed * dt / distance;
+
+        if (shelf.progress > 0) {
+            shelf.progress = 1;
+            shelf.direction = -1;
+        }
+        else if (shelf.progress <= 0) {
+            shelf.progress = 0;
+            shelf.direction = 1;
+        }
+
+        shelf.x = shelf.startX + (shelf.endX - shelf.startX) * shelf.progress;
+        shelf.y = shelf.startY + (shelf.endY - shelf.startY) * shelf.progress;
+
+        if (game.standingOn === shelf && player.grounded) {
+            game.carriedX = shelf.x - previousX;
+            player.y += shelf.y - previousY;
+            player.x += game.carriedX;
+        }
     }
 }
