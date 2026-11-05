@@ -85,7 +85,8 @@ const level = {
             x: 2660,
             y: 250,
             width: 100,
-            height: 22
+            height: 22,
+            fragile: true
         },
         {
             x: 3070,
@@ -198,3 +199,43 @@ level.vents = [
     { x: 1300, y: 460},
     { x: 2300, y: 460 }
 ];
+
+level.platforms.push(
+    {
+        x: 1330,
+        y: 250,
+        width: 100,
+        height: 20,
+        fragile: true
+    },
+    {
+        x: 1560,
+        y: 170,
+        width: 100,
+        height: 22
+    },
+    {
+        x: 1940,
+        y: 180,
+        width: 100,
+        height: 22,
+        fragile: true
+    },
+    {
+        x: 2350,
+        y: 268,
+        width: 64,
+        height: 25
+    }
+);
+
+level.cushions.push({
+    x: 2350,
+    y: 250,
+    width: 64,
+    height: 30
+});
+
+level.vents.push(
+    { x: 2750, y: 460}
+);
