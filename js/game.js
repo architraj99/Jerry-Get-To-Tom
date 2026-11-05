@@ -7,6 +7,8 @@ const spriteCrops = {
     cracked: [25, 33, 450, 89],
     cushion: [10, 15, 100, 70],
     shelf: [25, 33, 450, 111],
+    vent: [ 12, 10, 96, 50],
+    steam: [15, 10, 100, 170],
     restArea: [16, 71, 225, 70],
     tomInjured: [11, 33, 136, 77],
     tomHealed: [29, 11, 112, 119],
@@ -36,6 +38,7 @@ const game = {
     assetsReady: false,
     lastFrame: null,
     accumulator: 0,
+    vents: [],
     cushions: [],
     standingOn: null,
     carriedX: 0,
@@ -106,6 +109,8 @@ function loadImages() {
         cracked: "platform-cracked.png",
         cushion: "cushion.png",
         shelf: "moving-shelf.png",
+        vent: "steam-vent.png",
+        steam: "steam-cloud.png",
         paper: "manuscript-paper.png",
         jerry: "jerry.png",
         tomInjured: "tom-injured.png",
@@ -194,6 +199,13 @@ function startGame() {
 
     game.standingOn = null;
     game.carriedX = 0;
+
+    game.vents = level.vents.map(function (vent) {
+        return Object.assign({}, vent, {
+            phase: 0,
+            state: "inactive"
+        });
+    });
 
     player.x = level.start.x;
     player.y = level.start.y;
@@ -414,6 +426,7 @@ function updateGame(dt) {
     game.bonusTime = Math.max(0, game.bonusTime - dt);
     updateShelves(dt);
     updateCrumbling(dt);
+    updateSteam(dt);
 
     const previousFeet = player.y + player.height;
     movePlayer(dt);
@@ -421,7 +434,7 @@ function updateGame(dt) {
 
     if (
         player.y > level.height ||
-        (game.invincible === 0 && touchesSpikes())
+        (game.invincible === 0 && (touchesSpikes() || touchesSteam()))
     ) {
         resetPlayer();
         return;
@@ -668,6 +681,7 @@ function drawGame() {
 
     drawPlatforms();
     drawCushions();
+    drawSteam();
 
     for (const spikes of level.spikes) {
         drawSprite(
@@ -801,6 +815,58 @@ function updateShelves(dt) {
             game.carriedX = shelf.x - previousX;
             player.y += shelf.y - previousY;
             player.x += game.carriedX;
+        }
+    }
+}
+
+function updateSteam(dt) {
+
+    for (const vent of game.vents) {
+
+        vent.phase = (vent.phase +dt) % 4;
+        if (vent.phase < 2.5) {
+            vent.state = "inactive";
+            
+        }
+        else if (vent.phase < 3.5) {
+            vent.state = "warning";
+        }
+        else {
+            vent.state = "active";
+        }
+    }
+}
+
+function touchesSteam () {
+    for (const vent of game.vents) {
+       if (vent.state !== "active") {
+        continue;
+       } 
+
+       const smoke = {
+        x: vent.x + 6,
+        y: vent.y - 124,
+        width: 36,
+        height: 105
+       };
+
+       if (overlaps(player, smoke)) {
+        return true;
+       }
+    }
+
+    return false;
+}
+
+function drawSteam() {
+    for (const vent of game.vents ) {
+        drawSprite("vent", vent.x, vent.y - 24, 48, 24 );
+
+        if (vent.state === "warning") {
+            drawSprite("steam", vent.x + 13, vent.y - 48, 22, 28);
+        }
+        else if (vent.state === "active") {
+            drawSprite("steam", vent.x, vent.y- 124, 48, 105);
         }
     }
 }

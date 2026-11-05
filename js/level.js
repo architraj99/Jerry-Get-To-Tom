@@ -193,3 +193,8 @@ level.shelves = [
         speed: 20
     }
 ];
+
+level.vents = [
+    { x: 1300, y: 460},
+    { x: 2300, y: 460 }
+];
