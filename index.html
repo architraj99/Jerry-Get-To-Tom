@@ -28,6 +28,10 @@
                     </div>
                     <div id="penalty" aria-live="polite"></div>
                     <div id="bonus" role="status" aria-live="polite"></div>
+                    <div class="game-options">
+                        <button id="pause" type="button">PAUSE</button>
+                        <button id="sound" type="button">SOUND ON</button>
+                    </div>
                 </div>
                 <div id="touch-controls" aria-label="Touch Controls">
                     <div class="direction-controls">
@@ -35,6 +39,13 @@
                         <button type="button" data-control="right" aria-label="Move right">RIGHT</button>
                     </div>
                     <button type="button" data-control="jump" aria-label="Jump">JUMP</button>
+                </div>
+            </section>
+
+            <section id="pause-panel" class="screen" aria-label="Game Paused" hidden>
+                <div class="paper">
+                    <h2>PAUSED</h2>
+                    <button id="resume" type="button">RESUME</button>
                 </div>
             </section>
 

@@ -123,3 +123,22 @@ body.playing {
 body.touch-input #touch-controls {
     display: flex;
 }
+
+.game-options {
+    position: absolute;
+    right: 2%;
+    bottom: 3%;
+    display: flex;
+    gap: 6px;
+}
+
+.game-options button {
+    padding: 5px 10px;
+    font-size: 15px;
+}
+
+#pause-panel .paper {
+    width: min(420px, 100%);
+    min-height: 0;
+    padding: 55px;
+}

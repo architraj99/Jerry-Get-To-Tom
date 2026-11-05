@@ -68,3 +68,56 @@ document.getElementById("play").addEventListener("click", playFromButton);
 document.getElementById("retry").addEventListener("click", playFromButton);
 document.getElementById("home").addEventListener("click", goHome);
 document.addEventListener("gameresult", showResult);
+
+function togglePause() {
+  if (game.status === "paused") {
+    game.status = game.pausedFrom;
+    game.lastFrame = null;
+    game.accumulator = 0;
+    clearInput();
+    document.getElementById("pause-panel").hidden = true;
+
+    if (audioContext && !game.muted) {
+      audioContext.resume().catch(function () {});
+    }
+
+    game.frameId = requestAnimationFrame(gameFrame);
+    canvas.focus();
+  }
+
+  else if (game.status === "playing" || game.status === "healing") {
+    game.pausedFrom = game.status;
+    game.status = "paused";
+
+    cancelAnimationFrame(game.frameId);
+    clearInput();
+
+    document.getElementById("pause-panel").hidden = false;
+
+    if (audioContext) {
+      audioContext.suspend().catch(function () {});
+    }
+    document.getElementById("resume").focus();
+  }
+}
+
+function toggleSound() {
+  game.muted = !game.muted;
+
+  document.getElementById("sound").textContent = game.muted ? "SOUND OFF" : "SOUND ON";
+
+  if (!audioContext) {
+    return;
+  }
+
+  if (game.muted) {
+    audioContext.suspend().catch(function () {});
+  }
+  else if (game.status !== "paused") {
+    audioContext.resume().catch(function () {});
+  }
+}
+
+document.getElementById("pause").addEventListener("click", togglePause);
+document.getElementById("resume").addEventListener("click", togglePause);
+document.getElementById("sound").addEventListener("click", toggleSound);

@@ -19,6 +19,8 @@ const spriteCrops = {
 
 const game = {
     status: "idle",
+    pausedFrom: null,
+    muted: false,
     time: 45,
     timerStartedAt: null,
     elapsedTime: 0,
@@ -62,6 +64,9 @@ const player = {
 let audioContext = null;
 
 function prepareAudio() {
+    if (game.muted) {
+        return;
+    }
     try {
         const AudioEngine = window.AudioContext || window.webkitAudioContext;
 
@@ -80,7 +85,7 @@ function prepareAudio() {
 }
 
 function playTone(frequency, duration) {
-    if (!audioContext || audioContext.state !== "running") {
+    if (game.muted || !audioContext || audioContext.state !== "running") {
         return;
     }
 
@@ -150,6 +155,8 @@ function startGame() {
     cancelAnimationFrame(game.frameId);
     clearInput();
     game.status = "playing";
+    game.pausedFrom = "null";
+    document.getElementById("pause-panel").hidden = true;
     game.time = 45;
     game.timerStartedAt = null;
     game.elapsedTime = 0;
@@ -499,6 +506,9 @@ function updateHud() {
 }
 
 function gameFrame(timestamp) {
+    if (game.status === "paused") {
+        return;
+    }
     if (game.lastFrame === null) {
         game.lastFrame = timestamp;
     }

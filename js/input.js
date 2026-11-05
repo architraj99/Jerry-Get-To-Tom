@@ -42,6 +42,16 @@ window.addEventListener("keydown", function (event) {
         return;
     }
 
+    if ((event.code === "Escape" || event.code === "KeyP") && !event.repeat) {
+        event.preventDefault();
+        togglePause();
+        return;
+    }
+
+    if (game.status === "paused") {
+        return;
+    }
+
     if(
         !moveKeys.includes(event.code) && 
         !jumpKeys.includes(event.code)
@@ -69,6 +79,15 @@ window.addEventListener("keyup", function (event) {
 document.querySelectorAll("[data-control]").forEach(function (button) {
     button.addEventListener("pointerdown", function (event) {
         event.preventDefault();
+        button.addEventListener("pointerdown", function (event) {
+
+            event.preventDefault();
+            if (game.status === "paused") {
+                return;
+            }
+
+            startCountdown();
+        });
         startCountdown();
         button.setPointerCapture(event.pointerId);
         heldPointers.set(event.pointerId, button.dataset.control);
