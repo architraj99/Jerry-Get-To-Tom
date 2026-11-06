@@ -24,6 +24,7 @@ function playFromButton() {
 
 function showResult(event) {
   const result = event.detail;
+  showRescueRecord(result);
   const title = document.getElementById("result-title");
   const message = document.getElementById("result-message");
   const reward = document.getElementById("reward");
@@ -121,3 +122,83 @@ function toggleSound() {
 document.getElementById("pause").addEventListener("click", togglePause);
 document.getElementById("resume").addEventListener("click", togglePause);
 document.getElementById("sound").addEventListener("click", toggleSound);
+
+function rescueMedal(result) {
+  if (result.elapsedTime <= 20 && result.cheese >= 2 && result.deaths === 0) {
+    return "GOLD";
+  }
+
+  if (result.elapsedTime <= 28 && result.cheese >= 1 && result.deaths <=3) {
+    return "SILVER";
+  }
+
+  return "BRONZE";
+}
+
+function readBest () {
+  try {
+    const saved = localStorage.getItem("jerry-rescue-best");
+
+    if (saved === null) {
+      return null;
+    }
+
+    const time = Number(saved);
+
+    if (Number.isFinite(time) && time > 0) {
+      return time;
+    }
+  }
+  catch (error) {
+    return null;
+  }
+  return null;
+}
+
+function saveBest(result) {
+  const best = readBest();
+
+  if (!result.won || !Number.isFinite(result.elapsedTime) || result.elapsedTime <= 0) {
+    return false;
+  }
+
+  if (best !== null && result.elapsedTime >= best) {
+    return false;
+  }
+
+  try {
+    localStorage.setItem(
+      "jerry-rescue-best",
+      String(result.elapsedTime)
+    );
+
+    return true;
+  }
+
+  catch (error) {
+    return false;
+  }
+}
+
+function showRescueRecord(result) {
+  const improved = saveBest(result);
+  const best = readBest();
+  const label = document.getElementById("rescue-record");
+
+  let text = result.won ? rescueMedal(result) + " RESCUE" : "";
+
+  if ( best !== null) {
+    if (text) {
+      text += " · ";
+    }
+
+    text += "BEST " + best.toFixed(1) + "s";
+  }
+
+  if (improved) {
+    text += " · NEW BEST";
+  }
+
+  label.textContent = text;
+  label.hidden = text === "";
+}

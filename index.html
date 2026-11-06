@@ -22,7 +22,7 @@
                 <div id="game-stage">
                     <canvas id="game" width="960" height="540" tabindex="0" aria-label="Move Jerry with arrow keys or A and D. Jump with up, W or space. Reach Tom before time runs out."></canvas>
                     <div class="hud">
-                        <span id="time">TIME 45.0</span>
+                        <span id="time">TIME 30.0</span>
                         <span id="cheese-count">CHEESE 0/7</span>
                         <span class="medicine-hud"><img src="assets/medicine.png" alt="Medicine carried"> </span>
                     </div>
@@ -67,7 +67,7 @@
                         <div><dt>JUMP</dt><dd><span>↑</span><span>W</span><span>SPACE</span></dd></div>
                     </dl>
                     <p>Avoid spikes and gaps.<br>Reach Tom before the timer ends.</p>
-                    <p class="time-limit">TIME: 45 SECONDS</p>
+                    <p class="time-limit">TIME: 30 SECONDS</p>
                     <button id="play" type="button" disabled>PLAY</button>
                     <p id="asset-status" role="status">Loading...</p>
                 </div>
@@ -85,6 +85,7 @@
                         <button id="home" type="button">HOME</button>
                     </div>
                     <p id="run-stats" class="run-stats"></p>
+                    <p id="rescue-record" class="run-stats" hidden></p>
                 </div>
             </section>
         </main>

@@ -21,7 +21,7 @@ const game = {
     status: "idle",
     pausedFrom: null,
     muted: false,
-    time: 45,
+    time: 30,
     timerStartedAt: null,
     elapsedTime: 0,
     cheese: [],
@@ -155,9 +155,9 @@ function startGame() {
     cancelAnimationFrame(game.frameId);
     clearInput();
     game.status = "playing";
-    game.pausedFrom = "null";
+    game.pausedFrom = null;
     document.getElementById("pause-panel").hidden = true;
-    game.time = 45;
+    game.time = 30;
     game.timerStartedAt = null;
     game.elapsedTime = 0;
     game.collected = 0;
